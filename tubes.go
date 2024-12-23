@@ -166,31 +166,36 @@ func tambahObat(A *tabObat) {
 		A.n++
 	}
 }
+func recursiveSearch(A tabObat, input string, index int) (Obat, bool) {
+	if index >= A.n {
+		return Obat{}, false
+	}
+
+	if strings.ToLower(A.DaftarObat[index].Nama) == strings.ToLower(input) || strings.ToLower(A.DaftarObat[index].Kode) == strings.ToLower(input) {
+		return A.DaftarObat[index], true
+	}
+
+	return recursiveSearch(A, input, index+1)
+}
 
 func cariObat(A tabObat) {
 	var input string
 	fmt.Print("Masukkan kode atau nama obat: ")
 	fmt.Scanln(&input)
-	ketemu := false
 
-	for i := 0; i < A.n; i++ {
-		if strings.ToLower(A.DaftarObat[i].Kode) == strings.ToLower(input) || strings.ToLower(A.DaftarObat[i].Nama) == strings.ToLower(input) {
-			ketemu = true
-			fmt.Println("Data Obat:")
-			fmt.Println("Nama:", A.DaftarObat[i].Nama)
-			fmt.Println("Kode:", A.DaftarObat[i].Kode)
-			fmt.Println("Harga:", A.DaftarObat[i].Harga)
-			fmt.Println("Jumlah Stok:", A.DaftarObat[i].JumlahStok)
-			fmt.Println("Tanggal Kadaluwarsa:", A.DaftarObat[i].TanggalKadaluwarsa)
-			fmt.Println("Kategori:", A.DaftarObat[i].Kategori)
-			fmt.Println("Pabrikan:", A.DaftarObat[i].Pabrikan)
-			return
-		}
-	}
+	obat, found := recursiveSearch(A, input, 0)
 
-	if !ketemu {
+	if found {
+		fmt.Println("Data Obat:")
+		fmt.Println("Nama:", obat.Nama)
+		fmt.Println("Kode:", obat.Kode)
+		fmt.Println("Harga:", obat.Harga)
+		fmt.Println("Jumlah Stok:", obat.JumlahStok)
+		fmt.Println("Tanggal Kadaluwarsa:", obat.TanggalKadaluwarsa)
+		fmt.Println("Kategori:", obat.Kategori)
+		fmt.Println("Pabrikan:", obat.Pabrikan)
+	} else {
 		fmt.Println("Obat dengan kode atau nama tersebut tidak ditemukan.")
-		return
 	}
 }
 
@@ -330,7 +335,7 @@ func pesanObat(A *tabObat) {
 	}
 }
 func tampilkanObatMahal(A tabObat) {
-	sortingAscendingByHarga(&A)
+	sortingDescendingByHarga(&A)
 	fmt.Println("\nDaftar Obat Berdasarkan Harga tertinggi ke terendah:")
 	for i := 0; i < A.n; i++ {
 		fmt.Printf("%d. Nama: %s, Harga: %d\n", i+1, A.DaftarObat[i].Nama, A.DaftarObat[i].Harga)
@@ -461,6 +466,7 @@ func cariBinary(obatList []Obat, input string) int {
 
 	for low <= high {
 		mid := (low + high) / 2
+
 		if strings.ToLower(obatList[mid].Nama) == input || strings.ToLower(obatList[mid].Kode) == input {
 			return mid
 		} else if strings.ToLower(obatList[mid].Nama) > input {
